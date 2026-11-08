@@ -280,27 +280,14 @@
         }
       }
 
-      /* ============ 4 · Crimson band / featured work ============ */
+      /* ============ 4 · Crimson band — main display ============
+         The featured film sits on the page's crimson, full-bleed:
+         black ink type on red, the wide 16:9 frame below. */
       .band {
         background: var(--crimson);
         color: var(--ink-on-red);
         margin-top: 4rem;
         padding-block: 1.75rem 2rem;
-      }
-      .band-inner {
-        display: grid;
-        grid-template-columns: 1fr;
-        gap: 1.5rem;
-      }
-      .band-thumb {
-        position: relative;
-        margin: 0;
-        border: 0;
-        padding: 0;
-        background: none;
-        width: 100%;
-        max-width: 26rem;
-        text-align: left;
       }
       /* Framed thumbnails: the wrapper owns the aspect ratio,
          the img simply fills it. */
@@ -311,16 +298,10 @@
         object-fit: cover;
         transition: transform 240ms var(--ease-sheet);
       }
-      .frame--band { aspect-ratio: 3 / 4; }
-      .frame--band img { object-position: center; }
       .frame--df { aspect-ratio: 16 / 9; }
 
-      /* ============ 4b · Main display — Digital Freedom ============
-         The front display, ahead of the crimson band: it stays on
-         the page's black ground so the wide 16:9 frame leads, with
-         the band's caption/title type doing the labelling. */
-      .main-display { margin-top: 4rem; }
-      .main-eyebrow { color: var(--crimson); padding-bottom: 0.9rem; }
+      /* ── Main display type: the band's labelling, in ink on red ── */
+      .main-eyebrow { color: var(--ink-on-red); padding-bottom: 0.9rem; }
       .main-title {
         margin: 0;
         font-size: clamp(2.1rem, 6.5vw, 4.75rem);
@@ -345,9 +326,6 @@
         background: none;
         text-align: left;
       }
-      @media (min-width: 760px) {
-        .main-display { margin-top: 5.5rem; }
-      }
       @media (hover: hover) {
         .main-thumb:hover .frame img { transform: scale(1.02); }
       }
@@ -365,26 +343,8 @@
         place-items: center;
       }
       .play-badge svg { width: 0.95rem; height: 0.95rem; margin-left: 0.15rem; }
-      .band-text { align-self: end; }
-      .band-title {
-        margin: 0;
-        font-size: var(--type-display);
-        font-weight: 900;
-        letter-spacing: -0.04em;
-        line-height: 0.95;
-      }
-      .band .caption { color: var(--ink-on-red); padding-top: 0.9rem; }
       @media (min-width: 760px) {
         .band { padding-block: 3rem; margin-top: 5.5rem; }
-        .band-inner {
-          grid-template-columns: 5fr 7fr;
-          align-items: end;
-          gap: 3rem;
-        }
-        .band-thumb { max-width: 23rem; justify-self: start; }
-      }
-      @media (hover: hover) {
-        .band-thumb:hover .frame img { transform: scale(1.02); }
       }
 
       /* ============ 5 · Carousel — selected works ============ */
@@ -616,9 +576,9 @@
         </section>
       </div>
 
-      <!-- 4a · Main display — Digital Freedom, contest winner -->
-      <div class="pad">
-        <section class="main-display reveal" id="featured" style="--d: 3" aria-label="Main display — Digital Freedom">
+      <!-- 4 · Main display — Digital Freedom, contest winner, on the crimson band -->
+      <section class="band reveal" id="featured" style="--d: 3" aria-label="Main display — Digital Freedom">
+        <div class="pad">
           <p class="caption main-eyebrow">Digital Freedom</p>
           <h2 class="main-title">Winner — Telegram Digital Freedom Contest</h2>
           <p class="main-note">My most complex edit yet — a 22-second contest film.</p>
@@ -626,34 +586,13 @@
             <span class="frame frame--df">
               <img
                 src="assets/freedom-poster.jpg"
-                alt="A crowd tracked by surveillance camera boxes, with the words Personal freedom — a frame from the Digital Freedom film"
+                alt="Pavel Durov speaking on stage in front of a Freedom Forum backdrop — a frame from the Digital Freedom film"
               />
             </span>
             <span class="play-badge" aria-hidden="true">
               <svg viewBox="0 0 16 16" fill="none"><path d="M4 2.5v11l9-5.5-9-5.5Z" fill="#F4F1EA"/></svg>
             </span>
           </button>
-        </section>
-      </div>
-
-      <!-- 4b · Crimson band — Nile Sushi -->
-      <section class="band reveal" style="--d: 4" aria-label="Featured work — Nile Sushi">
-        <div class="pad band-inner">
-          <button class="band-thumb" id="nilePlayBtn" aria-label="Play Nile Sushi, commercial film, 44 seconds">
-            <span class="frame frame--band">
-              <img
-                src="assets/cleopatra.jpg"
-                alt="Cleopatra on her golden throne, eating sushi from a tray — a frame from the Nile Sushi film"
-              />
-            </span>
-            <span class="play-badge" aria-hidden="true">
-              <svg viewBox="0 0 16 16" fill="none"><path d="M4 2.5v11l9-5.5-9-5.5Z" fill="#F4F1EA"/></svg>
-            </span>
-          </button>
-          <div class="band-text">
-            <h2 class="band-title">Nile Sushi</h2>
-            <p class="caption">Commercial — 0:44</p>
-          </div>
         </div>
       </section>
 
@@ -689,12 +628,6 @@
       <video class="wide" id="film" src="assets/digital-freedom.mp4" poster="assets/freedom-poster.jpg" controls playsinline preload="none"></video>
     </div>
 
-    <!-- Nile Sushi player -->
-    <div class="lightbox" id="nileLightbox" role="dialog" aria-modal="true" aria-label="Nile Sushi — commercial film">
-      <button class="lightbox-close">Close</button>
-      <video id="nileFilm" src="assets/nile-sushi-film.mp4" poster="assets/cleopatra.jpg" controls playsinline preload="none"></video>
-    </div>
-
     <script>
       // Menu pill: toggles the small nav panel.
       var menuBtn = document.getElementById("menuBtn");
@@ -712,9 +645,7 @@
         }
       });
 
-      // Film thumbnails play their real film in a lightbox —
-      // one wiring helper, used by both the main display and
-      // the Nile Sushi band.
+      // The film thumbnail plays its real film in a lightbox.
       function wirePlayer(btnId, boxId, videoId) {
         var box = document.getElementById(boxId);
         var vid = document.getElementById(videoId);
@@ -736,7 +667,6 @@
         });
       }
       wirePlayer("playBtn", "lightbox", "film");
-      wirePlayer("nilePlayBtn", "nileLightbox", "nileFilm");
 
       /* Apple Hello effect: start the handwriting draw-on once,
          when the "portfolio" word scrolls into view. Under
