@@ -1,0 +1,1488 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="color-scheme" content="dark" />
+    <link rel="icon" href="data:," />
+    <title>Sevi — Video Portfolio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;800;900&family=Mr+Dafoe&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      /* ============ Palette & type scale (edit here to retune) ============ */
+      :root {
+        --black: #0a0a0a;
+        --paper: #f4f1ea;
+        --crimson: #e50914;
+        --grey: #8a8a86;
+        --ink-on-red: #0a0a0a;
+
+        --font: "Archivo", "Helvetica Neue", Arial, sans-serif;
+
+        --type-hero: clamp(4.25rem, 17.5vw, 21rem);
+        --type-display: clamp(3.4rem, 14.5vw, 9.5rem);
+        --type-caption: 0.6875rem; /* 11px */
+
+        --pad-x: 1.25rem;
+        --ease-sheet: cubic-bezier(0.32, 0.72, 0, 1);
+      }
+      @media (min-width: 760px) {
+        :root { --pad-x: 2.5rem; }
+      }
+
+      * { box-sizing: border-box; }
+      html { scroll-behavior: smooth; }
+      body {
+        margin: 0;
+        background: var(--black);
+        color: var(--paper);
+        font-family: var(--font);
+        -webkit-font-smoothing: antialiased;
+        overflow-x: hidden;
+      }
+      img { display: block; max-width: 100%; }
+      button { font-family: inherit; cursor: pointer; }
+
+      .caption {
+        font-size: var(--type-caption);
+        font-weight: 600;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--grey);
+        margin: 0;
+      }
+
+      main {
+        display: flex;
+        flex-direction: column;
+        min-height: 100svh;
+      }
+      .pad { padding-inline: var(--pad-x); }
+
+      /* ============ 1 · Top row ============ */
+      .toprow {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        padding-top: calc(1.1rem + env(safe-area-inset-top));
+      }
+      .toprow .caption { color: var(--paper); }
+      .menu-btn {
+        background: var(--paper);
+        color: var(--black);
+        border: 0;
+        border-radius: 999px;
+        padding: 0.45rem 1rem;
+        font-size: var(--type-caption);
+        font-weight: 600;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        transition: opacity 150ms var(--ease-sheet);
+      }
+      .menu-btn:active { opacity: 0.7; }
+
+      .menu-panel {
+        display: none;
+        padding-top: 1.25rem;
+      }
+      .menu-panel.open { display: block; }
+      .menu-panel nav { display: flex; flex-direction: column; gap: 0.15rem; }
+      /* Contact items use the caption face — the same Archivo
+         caption style as the "Available for work" line. */
+      .menu-contact-label { padding-bottom: 0.65rem; }
+      .menu-panel a {
+        color: var(--paper);
+        text-decoration: none;
+        font-size: var(--type-caption);
+        font-weight: 600;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        line-height: 1.25;
+        width: fit-content;
+        padding-block: 0.5rem;
+        transition: color 180ms var(--ease-sheet);
+      }
+      .menu-panel a:hover { color: var(--crimson); }
+
+      /* ============ 2 · Giant name ============ */
+      .hero { padding-top: 2.5rem; }
+      .name-wrap {
+        position: relative;
+        isolation: isolate;
+      }
+      .mr-dafoe-regular {
+        font-family: "Mr Dafoe", cursive;
+        font-weight: 400;
+        font-style: normal;
+      }
+      h1.name {
+        position: relative;
+        z-index: 1;
+        margin: 0;
+        padding: 0.08em 0.06em 0.14em 0.02em;
+        font-family: "Mr Dafoe", cursive;
+        font-size: var(--type-hero);
+        font-weight: 400;
+        font-style: normal;
+        letter-spacing: 0;
+        line-height: 1.12;
+        white-space: nowrap;
+      }
+      @media (max-width: 560px) {
+        h1.name { white-space: normal; }
+      }
+
+      /* ── Animated gradient (behind the name) ─────────────────
+         Vanilla WebGL2 port of the AnimatedGradient component
+         (animated-gradient.tsx): same fragment shader, uniforms
+         and swirl/checks math, recoloured to this page's palette
+         — ground black, the band's crimson, and a deep maroon in
+         place of the preset's white, so the paper name stays
+         legible over it. The one change to the shader itself is a
+         fix in the Stripes branch, where the source ships a
+         malformed line (`mixer = shape + .55, f);`) that no GLSL
+         compiler accepts; it now mirrors the Checks branch.
+         The layer bleeds a little past the name's box and fades
+         out at its edges, so it reads as a glow behind the type,
+         not a panel. If WebGL2 is unavailable the CSS gradient
+         underneath simply stays visible. */
+      .animated-gradient {
+        position: absolute;
+        inset: -0.75rem -1rem;
+        z-index: 0;
+        overflow: hidden;
+        border-radius: 28px;
+        background:
+          radial-gradient(90% 120% at 18% 30%, rgba(229, 9, 20, 0.55), transparent 62%),
+          radial-gradient(70% 110% at 82% 78%, rgba(122, 12, 18, 0.5), transparent 65%),
+          var(--black);
+        -webkit-mask-image: radial-gradient(118% 150% at 42% 50%, #000 52%, transparent 98%);
+        mask-image: radial-gradient(118% 150% at 42% 50%, #000 52%, transparent 98%);
+        pointer-events: none;
+      }
+      .animated-gradient canvas {
+        display: block;
+        width: 100%;
+        height: 100%;
+      }
+      .animated-gradient .ag-noise {
+        position: absolute;
+        inset: 0;
+        background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAwBAMAAAClLOS0AAAAElBMVEUAAAAAAAAAAAAAAAAAAAAAAADgKxmiAAAABnRSTlMCCgkGBAVJOAVJAAAASklEQVQ4y2NgGAWjYBSMglEwCgY/YGRgZBQUYmJiZGQEkYwMjIyMgoKCjIyMIJKBgRFIMjIyAklGRkYGRkFBYEcwMDIyMjAOUQAA1I4HwVwZAkYAAAAASUVORK5CYII=");
+        background-size: 200px;
+        background-repeat: repeat;
+        opacity: 0.05;
+        pointer-events: none;
+      }
+
+      /* ============ 3 · Caption row ============ */
+      .subrow {
+        display: flex;
+        justify-content: flex-end;
+        gap: 1rem;
+        padding-top: 1.1rem;
+      }
+      .subrow .caption:last-child { text-align: right; }
+
+      /* ============ 3b · Gradient preset examples ============ */
+      .presets { padding-top: 2.75rem; }
+      .presets-caption { padding-bottom: 0.9rem; }
+      .preset-row {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(6.5rem, 1fr));
+        gap: 0.65rem;
+      }
+      .preset-tile {
+        background: none;
+        border: 0;
+        padding: 0;
+        text-align: left;
+      }
+      .preset-thumb {
+        display: block;
+        aspect-ratio: 8 / 5;
+        border-radius: 10px;
+        background-size: cover;
+        background-position: center;
+        box-shadow: inset 0 0 0 1px rgba(244, 241, 234, 0.16);
+        transition: box-shadow 180ms var(--ease-sheet);
+      }
+      .preset-tile[aria-pressed="true"] .preset-thumb {
+        box-shadow: 0 0 0 2px var(--paper);
+      }
+      .preset-name {
+        display: block;
+        padding-top: 0.45rem;
+        font-size: var(--type-caption);
+        font-weight: 600;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--grey);
+      }
+      .preset-tile[aria-pressed="true"] .preset-name { color: var(--paper); }
+
+      /* ============ 3c · Apple Hello effect — "portfolio" ============
+         Vanilla port of the AppleHelloEffect idea (SVG handwriting
+         draw-on): an SVG <text> set in Mr Dafoe — the same font as
+         the "Kaii Snuchy" name — whose outline strokes draw
+         themselves (stroke-dashoffset) before the fill fades in,
+         mirroring the source component's two-stage timing (fast
+         first stroke, long easeInOut draw, fill/opacity trailing).
+         The React/motion original animates pathLength on hand-made
+         paths; a static page has no motion runtime and the user
+         asked for the real Mr Dafoe letterforms, so the text
+         element itself carries the stroke animation instead.
+         Plays once when scrolled into view (script below); under
+         prefers-reduced-motion it simply appears, finished. */
+      .hello-effect { padding-top: 3.25rem; text-align: left; }
+      .hello-svg {
+        display: block;
+        width: min(100%, 40rem);
+        height: auto;
+        margin-inline: 0;
+        overflow: visible;
+      }
+      .hello-svg text {
+        font-family: "Mr Dafoe", cursive;
+        font-weight: 400;
+        font-style: normal;
+        font-size: 9.5rem;
+        fill: var(--paper);
+        fill-opacity: 0;
+        stroke: var(--paper);
+        stroke-width: 1.3;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        stroke-dasharray: 800;
+        stroke-dashoffset: 800;
+      }
+      .hello-effect.play .hello-svg text {
+        animation:
+          hello-draw 2.8s ease-in-out 0.15s forwards,
+          hello-fill 0.8s ease-in-out 2.2s forwards;
+      }
+      @keyframes hello-draw {
+        to { stroke-dashoffset: 0; }
+      }
+      @keyframes hello-fill {
+        to { fill-opacity: 1; }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .hello-effect .hello-svg text {
+          stroke-dashoffset: 0;
+          fill-opacity: 1;
+          animation: none;
+        }
+      }
+
+      /* ============ 4 · Crimson band / featured work ============ */
+      .band {
+        background: var(--crimson);
+        color: var(--ink-on-red);
+        margin-top: 4rem;
+        padding-block: 1.75rem 2rem;
+      }
+      .band-inner {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+      }
+      .band-thumb {
+        position: relative;
+        margin: 0;
+        border: 0;
+        padding: 0;
+        background: none;
+        width: 100%;
+        max-width: 26rem;
+        text-align: left;
+      }
+      /* Framed thumbnails: the wrapper owns the aspect ratio,
+         the img simply fills it. */
+      .frame { display: block; overflow: hidden; }
+      .frame img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 240ms var(--ease-sheet);
+      }
+      .frame--band { aspect-ratio: 3 / 4; }
+      .frame--band img { object-position: center; }
+      .frame--df { aspect-ratio: 16 / 9; }
+
+      /* ============ 4b · Main display — Digital Freedom ============
+         The front display, ahead of the crimson band: it stays on
+         the page's black ground so the wide 16:9 frame leads, with
+         the band's caption/title type doing the labelling. */
+      .main-display { margin-top: 4rem; }
+      .main-eyebrow { color: var(--crimson); padding-bottom: 0.9rem; }
+      .main-title {
+        margin: 0;
+        font-size: clamp(2.1rem, 6.5vw, 4.75rem);
+        font-weight: 900;
+        letter-spacing: -0.03em;
+        line-height: 1.02;
+      }
+      .main-note {
+        margin: 1rem 0 0;
+        font-size: 1.0625rem;
+        font-weight: 500;
+        line-height: 1.45;
+        max-width: 34rem;
+      }
+      .main-thumb {
+        position: relative;
+        display: block;
+        width: 100%;
+        margin-top: 1.75rem;
+        border: 0;
+        padding: 0;
+        background: none;
+        text-align: left;
+      }
+      @media (min-width: 760px) {
+        .main-display { margin-top: 5.5rem; }
+      }
+      @media (hover: hover) {
+        .main-thumb:hover .frame img { transform: scale(1.02); }
+      }
+      .frame--work { aspect-ratio: 4 / 3; }
+      .frame--work.app img { object-position: center 28%; }
+      .play-badge {
+        position: absolute;
+        left: 0.9rem;
+        bottom: 0.9rem;
+        width: 2.6rem;
+        height: 2.6rem;
+        border-radius: 50%;
+        background: var(--black);
+        display: grid;
+        place-items: center;
+      }
+      .play-badge svg { width: 0.95rem; height: 0.95rem; margin-left: 0.15rem; }
+      .band-text { align-self: end; }
+      .band-title {
+        margin: 0;
+        font-size: var(--type-display);
+        font-weight: 900;
+        letter-spacing: -0.04em;
+        line-height: 0.95;
+      }
+      .band .caption { color: var(--ink-on-red); padding-top: 0.9rem; }
+      @media (min-width: 760px) {
+        .band { padding-block: 3rem; margin-top: 5.5rem; }
+        .band-inner {
+          grid-template-columns: 5fr 7fr;
+          align-items: end;
+          gap: 3rem;
+        }
+        .band-thumb { max-width: 23rem; justify-self: start; }
+      }
+      @media (hover: hover) {
+        .band-thumb:hover .frame img { transform: scale(1.02); }
+      }
+
+      /* ============ 5 · Carousel — selected works ============ */
+      .works-car { padding-top: 4.5rem; }
+      .works-caption { text-align: center; padding-bottom: 0.5rem; }
+      .works-car .car { margin-inline: auto; }
+      /* The stage is 476px wide; on narrow phones scale it down so
+         it never pushes the page sideways. */
+      @media (max-width: 560px) { .works-car .car { zoom: 0.85; } }
+      @media (max-width: 480px) { .works-car .car { zoom: 0.74; } }
+      @media (max-width: 400px) { .works-car .car { zoom: 0.66; } }
+      @media (max-width: 340px) { .works-car .car { zoom: 0.58; } }
+
+      /* ══ Carousel ═══════════════════════════════════════════════
+         assets/Carousel.tsx. A row of cards that drift at rest, give
+         under the pointer, and can be thrown. Three motions on three
+         nested elements, one transform each — see the note in
+         Carousel.tsx for why they cannot share a node. */
+      .car {
+        /* Bencho's tokens, mapped to this project's own and defined
+           here, on the component's own root, so nothing leaks out:
+           --bg is the project's ground, --font-ui its UI font,
+           --ink-rgb the bare numbers of its ink #F4F1EA, and
+           --shadow-rgb plain black — a shadow on a black ground.
+           --lift and --sway are not tokens: the component sets them
+           per card inline from the Float knob. */
+        --bg: var(--black);
+        --font-ui: var(--font);
+        --ink-rgb: 244, 241, 234;
+        --shadow-rgb: 0, 0, 0;
+        position: relative;
+        font-family: var(--font-ui);}
+
+      /* ── the frame is only a frame ─────────────────────────────
+         No background, no clip, no mask. This was a box that cut
+         the cards at its edges, and before that a mask that faded
+         them out there, and both were answers to the question of
+         what happens to a card when it runs out of block. The cards
+         are on a ring now and never reach an edge, so the question
+         is gone and so is everything that was answering it.
+
+         Which also means nothing here forces `transform-style:
+         flat` any more — overflow and mask both did, and both were
+         safe only because the perspective sits two levels down on
+         `.car-float`. It no longer has to be. */
+      .car-track {
+        position: absolute;
+        inset: 0;
+        touch-action: pan-y;
+        cursor: grab;}
+
+      .car-track[data-held="true"] {
+        cursor: grabbing;}
+
+      .car-track:focus-visible {
+        outline: none;
+        box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px rgba(var(--ink-rgb), 0.4);}
+
+      /* the slot holds WHERE on the ring and the card's own resting
+         ANGLE, written per frame by the component — so it carries no
+         transition of its own, or the easing and the drag would
+         re-interpolate against each other and what you would see is
+         the transition rather than the finger */
+      .car-slot {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform-origin: center;}
+
+      /* ── the drift ──────────────────────────────────────────────
+         Keyframes rather than a loop: a rAF per card would be a
+         permanent loop for motion nobody is watching, and a wall
+         holding several of these blocks would run a dozen. This
+         runs on the compositor and pauses itself when the tab
+         hides. The period is set per card and deliberately does not
+         divide into its neighbours' — that is what stops the row
+         breathing in unison.
+
+         The perspective lives HERE, not on the track: on the track
+         a card at the edge of the row would tilt toward the middle
+         of the stage rather than toward the finger on it. Each card
+         is its own object being touched and wants its own vanishing
+         point. */
+      .car-float {
+        width: 100%;
+        height: 100%;
+        perspective: 760px;
+        animation: car-bob 5s ease-in-out infinite;}
+
+      .car-card {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        background-size: cover;
+        background-position: center;
+        /* no transition: the tilt is sprung in the component, and a
+           transition on top would be a second opinion about how this
+           card settles */}
+
+      .car-sheen {
+        position: absolute;
+        inset: 0;
+        display: block;
+        pointer-events: none;}
+
+      @media (prefers-reduced-motion: reduce) {
+        .car-float { animation: none; }
+      }
+
+      @keyframes car-bob {
+        0%, 100% {
+          transform: translateY(calc(var(--lift, 4px) * -1)) rotate(calc(var(--sway, 1deg) * -1));
+        }
+        50% {
+          transform: translateY(var(--lift, 4px)) rotate(var(--sway, 1deg));
+        }}
+
+      /* ============ 6 · Footer ============ */
+      footer {
+        margin-top: auto;
+        display: flex;
+        justify-content: space-between;
+        gap: 1rem;
+        padding-top: 5rem;
+        padding-bottom: calc(1.25rem + env(safe-area-inset-bottom));
+      }
+
+      /* ============ Video lightbox ============ */
+      .lightbox {
+        position: fixed;
+        inset: 0;
+        background: rgba(5, 5, 5, 0.96);
+        display: none;
+        place-items: center;
+        z-index: 50;
+        padding: 1rem;
+      }
+      .lightbox.open { display: grid; }
+      .lightbox video {
+        max-height: 86svh;
+        max-width: min(92vw, 30rem);
+        width: auto;
+        background: #000;
+      }
+      .lightbox video.wide {
+        width: 100%;
+        max-width: min(94vw, 64rem);
+      }
+      .lightbox-close {
+        position: absolute;
+        top: calc(1rem + env(safe-area-inset-top));
+        right: 1rem;
+        background: var(--paper);
+        color: var(--black);
+        border: 0;
+        border-radius: 999px;
+        padding: 0.45rem 1rem;
+        font-size: var(--type-caption);
+        font-weight: 600;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+      }
+
+      /* ============ Reveal motion (smooth, eased, staggered) ============ */
+      .reveal {
+        animation: rise 720ms var(--ease-sheet) both;
+        animation-delay: calc(var(--d, 0) * 70ms);
+      }
+      @keyframes rise {
+        from { opacity: 0; transform: translateY(14px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        html { scroll-behavior: auto; }
+        .reveal { animation: none; }
+        .frame img, .menu-btn, .menu-panel a { transition: none; }      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <!-- 1 · Top row -->
+      <div class="pad">
+        <div class="toprow reveal" style="--d: 0">
+          <p class="caption">AI Creative</p>
+          <button class="menu-btn" id="menuBtn" aria-expanded="false" aria-controls="menuPanel">Menu</button>
+        </div>
+        <div class="menu-panel" id="menuPanel">
+          <p class="caption menu-contact-label">Contact</p>
+          <nav aria-label="Contact">
+            <a href="https://x.com/Kaiisnuchy" target="_blank" rel="noopener">X</a>
+            <a href="https://www.instagram.com/kaiisnuchy_/" target="_blank" rel="noopener">Instagram</a>
+            <a href="mailto:kaiisnuchy@gmail.com">Email</a>
+            <a href="https://t.me/Kaiisnuchy" target="_blank" rel="noopener">Telegram</a>
+          </nav>
+        </div>
+      </div>
+
+      <!-- 2 · Giant name -->
+      <div class="pad hero reveal" id="top" style="--d: 1">
+        <div class="name-wrap">
+          <div class="animated-gradient" aria-hidden="true">
+            <canvas id="nameGradient"></canvas>
+            <div class="ag-noise"></div>
+          </div>
+          <h1 class="name mr-dafoe-regular">Kaii Snuchy</h1>
+        </div>
+      </div>
+
+      <!-- 3 · Caption row -->
+      <div class="pad subrow reveal" style="--d: 2">
+        <p class="caption">Available for work</p>
+      </div>
+
+      <!-- 3b · Gradient preset examples (tiles are built by the script below) -->
+      <div class="pad">
+        <section class="presets reveal" style="--d: 3" aria-label="Gradient presets">
+          <p class="caption presets-caption">Gradient presets — tap one to put it behind the name</p>
+          <div class="preset-row" id="presetRow"></div>
+        </section>
+      </div>
+
+      <!-- 3c · Apple Hello effect — "portfolio" in Mr Dafoe -->
+      <div class="pad">
+        <section class="hello-effect reveal" id="helloEffect" style="--d: 4" aria-label="Portfolio">
+          <svg class="hello-svg" viewBox="0 0 640 210" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="portfolio">
+            <title>portfolio</title>
+            <text x="6" y="54%" text-anchor="start" dominant-baseline="middle">portfolio</text>
+          </svg>
+        </section>
+      </div>
+
+      <!-- 4a · Main display — Digital Freedom, contest winner -->
+      <div class="pad">
+        <section class="main-display reveal" id="featured" style="--d: 3" aria-label="Main display — Digital Freedom">
+          <p class="caption main-eyebrow">Digital Freedom</p>
+          <h2 class="main-title">Winner — Telegram Digital Freedom Contest</h2>
+          <p class="main-note">My most complex edit yet — a 22-second contest film.</p>
+          <button class="main-thumb" id="playBtn" aria-label="Play Digital Freedom, Telegram contest film, 22 seconds">
+            <span class="frame frame--df">
+              <img
+                src="assets/freedom-poster.jpg"
+                alt="A crowd tracked by surveillance camera boxes, with the words Personal freedom — a frame from the Digital Freedom film"
+              />
+            </span>
+            <span class="play-badge" aria-hidden="true">
+              <svg viewBox="0 0 16 16" fill="none"><path d="M4 2.5v11l9-5.5-9-5.5Z" fill="#F4F1EA"/></svg>
+            </span>
+          </button>
+        </section>
+      </div>
+
+      <!-- 4b · Crimson band — Nile Sushi -->
+      <section class="band reveal" style="--d: 4" aria-label="Featured work — Nile Sushi">
+        <div class="pad band-inner">
+          <button class="band-thumb" id="nilePlayBtn" aria-label="Play Nile Sushi, commercial film, 44 seconds">
+            <span class="frame frame--band">
+              <img
+                src="assets/cleopatra.jpg"
+                alt="Cleopatra on her golden throne, eating sushi from a tray — a frame from the Nile Sushi film"
+              />
+            </span>
+            <span class="play-badge" aria-hidden="true">
+              <svg viewBox="0 0 16 16" fill="none"><path d="M4 2.5v11l9-5.5-9-5.5Z" fill="#F4F1EA"/></svg>
+            </span>
+          </button>
+          <div class="band-text">
+            <h2 class="band-title">Nile Sushi</h2>
+            <p class="caption">Commercial — 0:44</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 5 · Carousel — selected works -->
+      <div class="pad">
+        <section class="works-car reveal" id="works" style="--d: 4" aria-label="Selected works">
+          <p class="caption works-caption">Selected works — swipe to turn the ring</p>
+          <!-- Carousel (Bencho, MIT) mounts here; cards are built by the script below -->
+          <div class="car" id="carousel">
+            <div
+              class="car-track"
+              id="carTrack"
+              data-held="false"
+              role="group"
+              aria-label="Card carousel"
+              aria-roledescription="carousel"
+              tabindex="0"
+            ></div>
+          </div>
+        </section>
+      </div>
+
+      <!-- 6 · Footer -->
+      <footer class="pad reveal" style="--d: 5">
+        <p class="caption">26 © All Rights Reserved</p>
+        <p class="caption">made with patience</p>
+      </footer>
+    </main>
+
+    <!-- Digital Freedom player -->
+    <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Digital Freedom — Telegram contest film">
+      <button class="lightbox-close">Close</button>
+      <video class="wide" id="film" src="assets/digital-freedom.mp4" poster="assets/freedom-poster.jpg" controls playsinline preload="none"></video>
+    </div>
+
+    <!-- Nile Sushi player -->
+    <div class="lightbox" id="nileLightbox" role="dialog" aria-modal="true" aria-label="Nile Sushi — commercial film">
+      <button class="lightbox-close">Close</button>
+      <video id="nileFilm" src="assets/nile-sushi-film.mp4" poster="assets/cleopatra.jpg" controls playsinline preload="none"></video>
+    </div>
+
+    <script>
+      // Menu pill: toggles the small nav panel.
+      var menuBtn = document.getElementById("menuBtn");
+      var menuPanel = document.getElementById("menuPanel");
+      menuBtn.addEventListener("click", function () {
+        var open = menuPanel.classList.toggle("open");
+        menuBtn.setAttribute("aria-expanded", open ? "true" : "false");
+        menuBtn.textContent = open ? "Close" : "Menu";
+      });
+      menuPanel.addEventListener("click", function (e) {
+        if (e.target.tagName === "A") {
+          menuPanel.classList.remove("open");
+          menuBtn.setAttribute("aria-expanded", "false");
+          menuBtn.textContent = "Menu";
+        }
+      });
+
+      // Film thumbnails play their real film in a lightbox —
+      // one wiring helper, used by both the main display and
+      // the Nile Sushi band.
+      function wirePlayer(btnId, boxId, videoId) {
+        var box = document.getElementById(boxId);
+        var vid = document.getElementById(videoId);
+        if (!box || !vid) return;
+        document.getElementById(btnId).addEventListener("click", function () {
+          box.classList.add("open");
+          vid.play();
+        });
+        function close() {
+          vid.pause();
+          box.classList.remove("open");
+        }
+        box.querySelector(".lightbox-close").addEventListener("click", close);
+        box.addEventListener("click", function (e) {
+          if (e.target === box) close();
+        });
+        document.addEventListener("keydown", function (e) {
+          if (e.key === "Escape") close();
+        });
+      }
+      wirePlayer("playBtn", "lightbox", "film");
+      wirePlayer("nilePlayBtn", "nileLightbox", "nileFilm");
+
+      /* Apple Hello effect: start the handwriting draw-on once,
+         when the "portfolio" word scrolls into view. Under
+         reduced-motion the CSS shows the finished word at once,
+         so there is nothing to trigger. */
+      (function HelloEffect() {
+        var section = document.getElementById("helloEffect");
+        if (!section) return;
+        if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+        if (!("IntersectionObserver" in window)) {
+          section.classList.add("play");
+          return;
+        }
+        var io = new IntersectionObserver(function (entries) {
+          if (entries[0].isIntersecting) {
+            section.classList.add("play");
+            io.disconnect();
+          }
+        }, { threshold: 0.35 });
+        io.observe(section);
+      })();
+
+      /* Carousel — from Bencho (bencho.dev), MIT licensed — bencho.dev/licence.
+         Canonical React source: assets/Carousel.tsx. This page is static
+         HTML with no React runtime, so the component runs here as a
+         faithful vanilla port: same state, same numbers, same comments.
+         Instantiated with the settings chosen on Bencho's page:
+         orbit 146 (spread) and sink 20; the rest are the component's
+         own defaults, spin 0 included. */
+
+      /* ── inlined from lab/spring ──────────────────────── */
+      /* ── one spring, for everything that settles ───────────────
+         (see the full note in assets/Carousel.tsx) */
+      function springOf(tune) {
+        return {
+          /* stiffness: how hard it is pulled toward the target */
+          k: 0.08 + (tune / 100) * 0.16,
+          /* decay, per frame: how much of the velocity survives */
+          d: 0.62 + (tune / 100) * 0.2,
+        };
+      }
+
+      /* useSpring, as a small object: a value, a velocity, and a
+         loop that parks itself the moment the value has settled. */
+      function makeSpring(target, tune, instant, onChange) {
+        var cur = target, vel = 0, raf = 0, goal = target;
+        return {
+          get: function () { return cur; },
+          set: function (next) {
+            goal = next;
+            if (instant) {
+              cur = next; vel = 0;
+              if (raf) { cancelAnimationFrame(raf); raf = 0; }
+              onChange(cur);
+              return;
+            }
+            if (raf) return;
+            var sd = springOf(tune);
+            var prev = 0;
+            var tick = function (t) {
+              var dt = prev ? Math.min(2.5, Math.max(0, (t - prev) / 16.67)) : 1;
+              prev = t;
+              vel += (goal - cur) * sd.k * dt;
+              vel *= Math.pow(sd.d, dt);
+              cur += vel * dt;
+              if (Math.abs(goal - cur) < 0.02 && Math.abs(vel) < 0.02) {
+                cur = goal; vel = 0; raf = 0;
+                onChange(cur);
+                return;
+              }
+              onChange(cur);
+              raf = requestAnimationFrame(tick);
+            };
+            raf = requestAnimationFrame(tick);
+          },
+        };
+      }
+
+      (function Carousel() {
+        /* Read once, the way the wheel and the pill nav do. A
+           preference, not a live input. */
+        var still = !!window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+        var clamp = function (v, lo, hi) { return Math.min(hi, Math.max(lo, v)); };
+        var mix = function (a, b, t) { return a + (b - a) * t; };
+        /* How long it takes, slower to faster, as a multiplier on
+           whatever the component's own tuned duration is. */
+        var rate = function (speed) { return 1.6 - (speed / 100) * 1.2; };
+
+        /* SHOTS was Bencho's own pictures, which is not licensed
+           to travel. Point this at yours. */
+        var SHOTS = [
+          { name: "nile", src: "assets/cleopatra.jpg" },
+          { name: "product", src: "assets/sushi-plate.jpg" },
+          { name: "app", src: "assets/app-promo.jpg" },
+          { name: "brand", src: "assets/mountains.webp" },
+          { name: "delivery", src: "assets/delivery.jpg" },
+        ];
+
+        var CARD_W = 206;
+        var CARD_H = 292;
+        var STAGE_W = 476;
+        var STAGE_H = 340;
+        var DEPTH_MAX = 150;
+        var LEAN = 38;
+        /* how many px of drag turn the ring one position */
+        var PULL = 140;
+        /* how far ahead of the release the throw looks, in ms */
+        var TOSS = 150;
+        /* and how many it may skip */
+        var MOST = 2;
+        var BASE = 620;
+
+        /* the pictures ARE the count */
+        var N = SHOTS.length;
+
+        /* which one is at the front when it opens — BY NAME */
+        var FRONT = "nile";
+        var OPENS_ON = (function () {
+          var i = -1;
+          SHOTS.forEach(function (s, j) { if (s.name === FRONT) i = j; });
+          return i < 0 ? Math.floor((N - 1) / 2) : i;
+        })();
+
+        /* every card sits at its own angle */
+        var ANGLE = [-4.2, 2.6, -1.4, 3.8, 1.7];
+        /* the drift's periods, deliberately awkward */
+        var PERIOD = [4.7, 5.9, 6.7, 5.3, 7.1, 6.1];
+
+        /* the props, as chosen: spread 146, sink 20, rest default */
+        var orbit = 146, depth = 100, corner = 20, float = 15,
+            sink = 20, settle = 50, spin = 0;
+
+        /* ── where a card sits, given where the ring is ────────
+           ONE function, read by the first paint and by the drag both. */
+        function spotOf(i, turn) {
+          var th = (i - turn) * ((Math.PI * 2) / N);
+          var f = (Math.cos(th) + 1) / 2;
+          return {
+            x: Math.sin(th) * orbit,
+            y: -(1 - f) * LEAN,
+            s: mix(1 - clamp(depth, 0, DEPTH_MAX) / 200, 1, f),
+            /* paint order is a z-index, by hand */
+            z: Math.round(f * 100),
+          };
+        }
+
+        function writeSlot(el, sp, angle) {
+          /* NO OPACITY IS WRITTEN HERE. */
+          el.style.transform = "translate(-50%, -50%) translate(" + sp.x.toFixed(2) + "px, " + sp.y.toFixed(2) + "px) rotate(" + angle + "deg) scale(" + sp.s.toFixed(4) + ")";
+          el.style.zIndex = String(sp.z);
+        }
+
+        var out = function (t) { return 1 - Math.pow(1 - t, 4); };
+
+        var root = document.getElementById("carousel");
+        var track = document.getElementById("carTrack");
+        root.style.width = STAGE_W + "px";
+        root.style.height = STAGE_H + "px";
+
+        /* where the ring is: a continuous position in card-steps.
+           It is NOT clamped and NOT wrapped. */
+        var turn = OPENS_ON;
+        var raf = 0;
+        var drag = null;
+        var held = false;
+        var slots = [];
+        var cards = [];
+
+        function paint() {
+          slots.forEach(function (el, i) {
+            if (el) writeSlot(el, spotOf(i, turn), ANGLE[i % ANGLE.length]);
+          });
+        }
+
+        /* ── one card, and the press is its own ──────────────────
+           The tilt is a pair of springs on the pointer POSITION,
+           sprung; the transform and both gradients are three
+           readings of one number. */
+        function makeCard(shot, r) {
+          var deep = clamp(sink, 0, 100) / 100;
+          var max = deep * 13;
+          var pt = { x: 0, y: 0 };
+          var on = false;
+          var el = document.createElement("div");
+          el.className = "car-card";
+          el.style.borderRadius = r + "px";
+          el.style.backgroundImage = "url(" + shot + ")";
+          var sheen = document.createElement("span");
+          sheen.className = "car-sheen";
+          sheen.setAttribute("aria-hidden", "true");
+          sheen.style.borderRadius = r + "px";
+          el.appendChild(sheen);
+
+          function render() {
+            var sx = card.sx.get(), sy = card.sy.get(), lit = card.lit.get();
+            /* IT SINKS, IT DOES NOT LIFT */
+            var rx = -sy * max;
+            var ry = sx * max;
+            var px = ((sx + 1) / 2) * 100;
+            var py = ((sy + 1) / 2) * 100;
+            var dark = deep * 0.5 * lit;
+            var rim = deep * 0.16 * lit;
+            /* translateZ FIRST; ONE SHADOW, AND IT DOES NOT MOVE */
+            el.style.transform = "translateZ(" + (-10 * deep * lit).toFixed(2) + "px) rotateX(" + rx.toFixed(2) + "deg) rotateY(" + ry.toFixed(2) + "deg)";
+            el.style.boxShadow = "0 12px 28px -10px rgba(var(--shadow-rgb), 0.28)";
+            sheen.style.backgroundImage =
+              "radial-gradient(44% 36% at " + px.toFixed(1) + "% " + py.toFixed(1) + "%, rgba(9, 14, 28, " + dark.toFixed(3) + ") 0%, rgba(9, 14, 28, 0) 100%), " +
+              "radial-gradient(54% 44% at " + (100 - px).toFixed(1) + "% " + (100 - py).toFixed(1) + "%, rgba(255, 255, 255, " + rim.toFixed(3) + ") 0%, rgba(255, 255, 255, 0) 100%)";
+          }
+
+          var card = {
+            el: el,
+            sx: makeSpring(0, 50, still, render),
+            sy: makeSpring(0, 50, still, render),
+            lit: makeSpring(0, 50, still, render),
+            /* a card under a finger that is turning the ring is not
+               being pressed, it is being carried */
+            refresh: function () {
+              var live = on && !(held || still);
+              card.sx.set(live ? pt.x : 0);
+              card.sy.set(live ? pt.y : 0);
+              card.lit.set(live ? 1 : 0);
+            },
+          };
+
+          el.addEventListener("pointermove", function (e) {
+            var b = el.getBoundingClientRect();
+            pt = {
+              x: clamp(((e.clientX - b.left) / b.width) * 2 - 1, -1, 1),
+              y: clamp(((e.clientY - b.top) / b.height) * 2 - 1, -1, 1),
+            };
+            on = true;
+            card.refresh();
+          });
+          /* `out` with a containment test rather than `leave` */
+          el.addEventListener("pointerout", function (e) {
+            var to = e.relatedTarget;
+            if (!to || !el.contains(to)) { on = false; card.refresh(); }
+          });
+          el.addEventListener("pointercancel", function () { on = false; card.refresh(); });
+          render();
+          return card;
+        }
+
+        var r = clamp(corner, 0, 40);
+        SHOTS.forEach(function (shot, i) {
+          var slot = document.createElement("div");
+          slot.className = "car-slot";
+          slot.style.width = CARD_W + "px";
+          slot.style.height = CARD_H + "px";
+          /* ── the drift ─────────────────────────────────────
+             Its own element, so the keyframes own this transform
+             outright. The period is per card and the amplitudes
+             are the knob. */
+          var floater = document.createElement("div");
+          floater.className = "car-float";
+          if (float <= 0) floater.style.animationName = "none";
+          floater.style.animationDuration = PERIOD[i % PERIOD.length] + "s";
+          floater.style.setProperty("--lift", ((clamp(float, 0, 100) / 100) * 16).toFixed(2) + "px");
+          floater.style.setProperty("--sway", ((clamp(float, 0, 100) / 100) * 1.4).toFixed(2) + "deg");
+          var card = makeCard(shot.src, r);
+          floater.appendChild(card.el);
+          slot.appendChild(floater);
+          track.appendChild(slot);
+          slots.push(slot);
+          cards.push(card);
+        });
+
+        function setHeld(v) {
+          held = v;
+          track.setAttribute("data-held", v ? "true" : "false");
+          cards.forEach(function (c) { c.refresh(); });
+        }
+
+        /* placed on mount */
+        paint();
+
+        /* ── the ring turning itself ─────────────────────────
+           Its own frame loop and its own handle, deliberately not
+           `raf`. spin is 0 here — off, per the component's own
+           reasoning — so this loop never starts on this page. */
+        if (spin && !still) {
+          var spinId = 0, spinPrev = 0;
+          var spinStep = function (t) {
+            if (!held) {
+              if (spinPrev) turn += ((t - spinPrev) / 1000) * (N / spin);
+              paint();
+            }
+            spinPrev = t;
+            spinId = requestAnimationFrame(spinStep);
+          };
+          spinId = requestAnimationFrame(spinStep);
+        }
+
+        /* ── the settle ────────────────────────────────────────
+           Quart-out from wherever the ring currently is to a whole
+           position. */
+        function glide(to) {
+          cancelAnimationFrame(raf);
+          var from = turn;
+          if (still || from === to) { turn = to; paint(); return; }
+          var ms = BASE * rate(clamp(settle, 0, 100));
+          var t0 = performance.now();
+          var tick = function (now) {
+            var p = Math.min(1, (now - t0) / ms);
+            turn = mix(from, to, out(p));
+            paint();
+            if (p < 1) raf = requestAnimationFrame(tick);
+          };
+          raf = requestAnimationFrame(tick);
+        }
+
+        function go(d) { glide(Math.round(turn) + d); }
+
+        track.addEventListener("pointerdown", function (e) {
+          cancelAnimationFrame(raf);
+          drag = { x0: e.clientX, t0: turn, last: e.clientX, t: e.timeStamp, vx: 0, moved: false };
+          setHeld(true);
+          try { track.setPointerCapture(e.pointerId); } catch (err) { /* not a live pointer */ }
+        });
+
+        track.addEventListener("pointermove", function (e) {
+          var g = drag;
+          if (!g) return;
+          var dx = e.clientX - g.x0;
+          if (!g.moved && Math.abs(dx) > 3) g.moved = true;
+          /* px per ms, smoothed against the previous reading, and
+             measured from the LAST position rather than the grab */
+          var dt = Math.max(1, e.timeStamp - g.t);
+          g.vx = (g.vx + (e.clientX - g.last) / dt) / 2;
+          g.last = e.clientX;
+          g.t = e.timeStamp;
+          /* no rubber band, because there is no end */
+          turn = g.t0 - dx / PULL;
+          paint();
+        });
+
+        function up() {
+          var g = drag;
+          if (!g) return;
+          drag = null;
+          setHeld(false);
+          /* where it would come to rest if it kept going, capped */
+          var carry = clamp((-g.vx * TOSS) / PULL, -MOST, MOST);
+          glide(Math.round(turn + carry));
+        }
+        track.addEventListener("pointerup", up);
+        track.addEventListener("pointercancel", up);
+
+        track.addEventListener("keydown", function (e) {
+          var d = e.key === "ArrowRight" ? 1 : e.key === "ArrowLeft" ? -1 : 0;
+          if (!d) return;
+          e.preventDefault();
+          go(d);
+        });
+      })();
+
+      /* AnimatedGradient — vanilla WebGL2 port of the React
+         component in the brief (animated-gradient.tsx): same
+         shader, same uniform mapping, same hex colour parsing for
+         hex inputs. next-themes has no equivalent on this static
+         page and the hero is dark in both colour schemes, so the
+         dark palette is used unconditionally. Custom config,
+         matched to the page: black / crimson / deep maroon,
+         Checks pattern, a slow swirl.
+         Two run-time guards the React source doesn't need but a
+         permanent hero layer does: the loop parks itself when the
+         name is off screen or the tab is hidden, and under
+         prefers-reduced-motion it draws a single still frame. */
+      (function AnimatedGradient() {
+        var container = document.querySelector(".animated-gradient");
+        var canvas = document.getElementById("nameGradient");
+        if (!container || !canvas) return;
+
+        /* The component's own presets (dark colour sets), plus this
+           page's crimson as the default. shape: 0 Checks, 1 Stripes,
+           2 Edge — the same numbering the shader branches on. */
+        var PRESETS = [
+          { name: "Crimson", params: { color1: "#0A0A0A", color2: "#E50914", color3: "#7A0C12", rotation: -50, proportion: 38, scale: 0.18, speed: 16, distortion: 6, swirl: 55, swirlIterations: 10, softness: 85, offset: -299, shape: 0, shapeSize: 42 } },
+          { name: "Lava", params: { color1: "#FF9F21", color2: "#FF0303", color3: "#000000", rotation: 114, proportion: 100, scale: 0.52, speed: 30, distortion: 7, swirl: 18, swirlIterations: 20, softness: 100, offset: 717, shape: 2, shapeSize: 12 } },
+          { name: "Plasma", params: { color1: "#B566FF", color2: "#000000", color3: "#000000", rotation: 0, proportion: 63, scale: 0.75, speed: 30, distortion: 5, swirl: 61, swirlIterations: 5, softness: 100, offset: -168, shape: 0, shapeSize: 28 } },
+          { name: "Vortex", params: { color1: "#000000", color2: "#FFFFFF", color3: "#000000", rotation: 50, proportion: 41, scale: 0.4, speed: 20, distortion: 0, swirl: 100, swirlIterations: 3, softness: 5, offset: -744, shape: 1, shapeSize: 80 } },
+          { name: "Mist", params: { color1: "#050505", color2: "#FF66B8", color3: "#050505", rotation: 0, proportion: 33, scale: 0.48, speed: 39, distortion: 4, swirl: 65, swirlIterations: 5, softness: 100, offset: -235, shape: 2, shapeSize: 48 } },
+        ];
+        var params = Object.assign({}, PRESETS[0].params);
+
+        /* Preset example tiles: built before the WebGL setup so
+           they exist even where WebGL2 does not. Each tile starts
+           as a flat swatch of its preset's three colours; once the
+           shader below is running, the swatches are replaced with
+           rendered stills of the presets themselves. Tapping a
+           tile hands its params to presetHandler, which the live
+           gradient installs at the end of this block. */
+        var presetHandler = null;
+        var presetTiles = [];
+        (function buildPresetRow() {
+          var rowEl = document.getElementById("presetRow");
+          if (!rowEl) return;
+          PRESETS.forEach(function (preset, idx) {
+            var btn = document.createElement("button");
+            btn.type = "button";
+            btn.className = "preset-tile";
+            btn.setAttribute("aria-pressed", idx === 0 ? "true" : "false");
+            var thumb = document.createElement("span");
+            thumb.className = "preset-thumb";
+            thumb.style.backgroundImage = "linear-gradient(135deg, " + preset.params.color1 + ", " + preset.params.color2 + " 55%, " + preset.params.color3 + ")";
+            var label = document.createElement("span");
+            label.className = "preset-name";
+            label.textContent = preset.name;
+            btn.appendChild(thumb);
+            btn.appendChild(label);
+            btn.addEventListener("click", function () {
+              presetTiles.forEach(function (t) { t.btn.setAttribute("aria-pressed", "false"); });
+              btn.setAttribute("aria-pressed", "true");
+              if (presetHandler) presetHandler(preset.params);
+            });
+            rowEl.appendChild(btn);
+            presetTiles.push({ btn: btn, thumb: thumb, preset: preset });
+          });
+        })();
+
+        var gl = canvas.getContext("webgl2", {
+          premultipliedAlpha: true,
+          alpha: true,
+          antialias: true,
+        });
+        if (!gl) return; /* CSS gradient fallback stays visible */
+
+        var FRAGMENT_SHADER = `#version 300 es
+precision highp float;
+
+uniform float u_time;
+uniform float u_pixelRatio;
+uniform vec2 u_resolution;
+
+uniform float u_scale;
+uniform float u_rotation;
+uniform vec4 u_color1;
+uniform vec4 u_color2;
+uniform vec4 u_color3;
+uniform float u_proportion;
+uniform float u_softness;
+uniform float u_shape;
+uniform float u_shapeScale;
+uniform float u_distortion;
+uniform float u_swirl;
+uniform float u_swirlIterations;
+
+out vec4 fragColor;
+
+#define TWO_PI 6.28318530718
+#define PI 3.14159265358979323846
+
+vec2 rotate(vec2 uv, float th) {
+  return mat2(cos(th), sin(th), -sin(th), cos(th)) * uv;
+}
+
+float random(vec2 st) {
+  return fract(sin(dot(st.xy, vec2(12.9898, 78.233))) * 43758.5453123);
+}
+
+float noise(vec2 st) {
+  vec2 i = floor(st);
+  vec2 f = fract(st);
+  float a = random(i);
+  float b = random(i + vec2(1.0, 0.0));
+  float c = random(i + vec2(0.0, 1.0));
+  float d = random(i + vec2(1.0, 1.0));
+
+  vec2 u = f * f * (3.0 - 2.0 * f);
+
+  float x1 = mix(a, b, u.x);
+  float x2 = mix(c, d, u.x);
+  return mix(x1, x2, u.y);
+}
+
+vec4 blend_colors(vec4 c1, vec4 c2, vec4 c3, float mixer, float edgesWidth, float edge_blur) {
+    vec3 color1 = c1.rgb * c1.a;
+    vec3 color2 = c2.rgb * c2.a;
+    vec3 color3 = c3.rgb * c3.a;
+
+    float r1 = smoothstep(.0 + .35 * edgesWidth, .7 - .35 * edgesWidth + .5 * edge_blur, mixer);
+    float r2 = smoothstep(.3 + .35 * edgesWidth, 1. - .35 * edgesWidth + edge_blur, mixer);
+
+    vec3 blended_color_2 = mix(color1, color2, r1);
+    float blended_opacity_2 = mix(c1.a, c2.a, r1);
+
+    vec3 c = mix(blended_color_2, color3, r2);
+    float o = mix(blended_opacity_2, c3.a, r2);
+    return vec4(c, o);
+}
+
+void main() {
+    vec2 uv = gl_FragCoord.xy / u_resolution.xy;
+
+    float t = .5 * u_time;
+
+    float noise_scale = .0005 + .006 * u_scale;
+
+    uv -= .5;
+    uv *= (noise_scale * u_resolution);
+    uv = rotate(uv, u_rotation * .5 * PI);
+    uv /= u_pixelRatio;
+    uv += .5;
+
+    float n1 = noise(uv * 1. + t);
+    float n2 = noise(uv * 2. - t);
+    float angle = n1 * TWO_PI;
+    uv.x += 4. * u_distortion * n2 * cos(angle);
+    uv.y += 4. * u_distortion * n2 * sin(angle);
+
+    float iterations_number = ceil(clamp(u_swirlIterations, 1., 30.));
+    for (float i = 1.; i <= iterations_number; i++) {
+        uv.x += clamp(u_swirl, 0., 2.) / i * cos(t + i * 1.5 * uv.y);
+        uv.y += clamp(u_swirl, 0., 2.) / i * cos(t + i * 1. * uv.x);
+    }
+
+    float proportion = clamp(u_proportion, 0., 1.);
+
+    float shape = 0.;
+    float mixer = 0.;
+    if (u_shape < .5) {
+      vec2 checks_shape_uv = uv * (.5 + 3.5 * u_shapeScale);
+      shape = .5 + .5 * sin(checks_shape_uv.x) * cos(checks_shape_uv.y);
+      mixer = shape + .48 * sign(proportion - .5) * pow(abs(proportion - .5), .5);
+    } else if (u_shape < 1.5) {
+      vec2 stripes_shape_uv = uv * (.25 + 3. * u_shapeScale);
+      float f = fract(stripes_shape_uv.y);
+      shape = smoothstep(.0, .55, f) * smoothstep(1., .45, f);
+      mixer = shape + .48 * sign(proportion - .5) * pow(abs(proportion - .5), .5);
+    } else {
+      float sh = 1. - uv.y;
+      sh -= .5;
+      sh /= (noise_scale * u_resolution.y);
+      sh += .5;
+      float shape_scaling = .2 * (1. - u_shapeScale);
+      shape = smoothstep(.45 - shape_scaling, .55 + shape_scaling, sh + .3 * (proportion - .5));
+      mixer = shape;
+    }
+
+    vec4 color_mix = blend_colors(u_color1, u_color2, u_color3, mixer, 1. - clamp(u_softness, 0., 1.), .01 + .01 * u_scale);
+
+    fragColor = vec4(color_mix.rgb, color_mix.a);
+}
+`;
+
+        function compile(type, source) {
+          var shader = gl.createShader(type);
+          gl.shaderSource(shader, source);
+          gl.compileShader(shader);
+          return shader;
+        }
+
+        var vertexShader = compile(gl.VERTEX_SHADER, `#version 300 es
+    in vec4 a_position;
+    void main() {
+      gl_Position = a_position;
+    }`);
+        var fragmentShader = compile(gl.FRAGMENT_SHADER, FRAGMENT_SHADER);
+        if (!gl.getShaderParameter(fragmentShader, gl.COMPILE_STATUS)) return;
+
+        var program = gl.createProgram();
+        gl.attachShader(program, vertexShader);
+        gl.attachShader(program, fragmentShader);
+        gl.linkProgram(program);
+        if (!gl.getProgramParameter(program, gl.LINK_STATUS)) return;
+        gl.useProgram(program);
+
+        var positionBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+        gl.bufferData(
+          gl.ARRAY_BUFFER,
+          new Float32Array([-1, -1, 1, -1, -1, 1, -1, 1, 1, -1, 1, 1]),
+          gl.STATIC_DRAW
+        );
+        var positionLocation = gl.getAttribLocation(program, "a_position");
+        gl.enableVertexAttribArray(positionLocation);
+        gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
+
+        var uniforms = {};
+        ["u_time", "u_resolution", "u_pixelRatio", "u_scale", "u_rotation",
+         "u_color1", "u_color2", "u_color3", "u_proportion", "u_softness",
+         "u_shape", "u_shapeScale", "u_distortion", "u_swirl", "u_swirlIterations"
+        ].forEach(function (name) {
+          uniforms[name] = gl.getUniformLocation(program, name);
+        });
+
+        function hexToRgba(hex) {
+          var c = hex.slice(1);
+          if (c.length === 3) c = c[0] + c[0] + c[1] + c[1] + c[2] + c[2];
+          return [
+            parseInt(c.slice(0, 2), 16) / 255,
+            parseInt(c.slice(2, 4), 16) / 255,
+            parseInt(c.slice(4, 6), 16) / 255,
+            c.length === 8 ? parseInt(c.slice(6, 8), 16) / 255 : 1,
+          ];
+        }
+        var c1, c2, c3;
+        function setColors() {
+          c1 = hexToRgba(params.color1);
+          c2 = hexToRgba(params.color2);
+          c3 = hexToRgba(params.color3);
+        }
+        setColors();
+
+        function resize() {
+          var width = container.clientWidth;
+          var height = container.clientHeight;
+          if (!width || !height) return;
+          var pixelRatio = Math.min(window.devicePixelRatio || 1, 1.75);
+          canvas.width = Math.round(width * pixelRatio);
+          canvas.height = Math.round(height * pixelRatio);
+          gl.viewport(0, 0, canvas.width, canvas.height);
+        }
+        resize();
+        var resizeObserver = new ResizeObserver(resize);
+        resizeObserver.observe(container);
+
+        function draw(elapsedSeconds) {
+          var speed = (params.speed / 100) * 5;
+          gl.uniform1f(uniforms.u_time, elapsedSeconds * speed + params.offset * 0.01);
+          gl.uniform2f(uniforms.u_resolution, canvas.width, canvas.height);
+          gl.uniform1f(uniforms.u_pixelRatio, Math.min(window.devicePixelRatio || 1, 1.75));
+          gl.uniform1f(uniforms.u_scale, params.scale);
+          gl.uniform1f(uniforms.u_rotation, (params.rotation * Math.PI) / 180);
+          gl.uniform4f(uniforms.u_color1, c1[0], c1[1], c1[2], c1[3]);
+          gl.uniform4f(uniforms.u_color2, c2[0], c2[1], c2[2], c2[3]);
+          gl.uniform4f(uniforms.u_color3, c3[0], c3[1], c3[2], c3[3]);
+          gl.uniform1f(uniforms.u_proportion, params.proportion / 100);
+          gl.uniform1f(uniforms.u_softness, params.softness / 100);
+          gl.uniform1f(uniforms.u_shape, params.shape);
+          gl.uniform1f(uniforms.u_shapeScale, params.shapeSize / 100);
+          gl.uniform1f(uniforms.u_distortion, params.distortion / 50);
+          gl.uniform1f(uniforms.u_swirl, params.swirl / 100);
+          gl.uniform1f(uniforms.u_swirlIterations, params.swirl === 0 ? 0 : params.swirlIterations);
+          gl.drawArrays(gl.TRIANGLES, 0, 6);
+        }
+
+        var still = !!window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        if (still) { draw(4); return; }
+
+        var startTime = performance.now();
+        var frameId = 0;
+        var running = false;
+        var onScreen = true;
+
+        function animate(time) {
+          if (!running) return;
+          draw((time - startTime) / 1000);
+          frameId = requestAnimationFrame(animate);
+        }
+        function play() {
+          if (running) return;
+          running = true;
+          /* keep the swirl continuous across a pause: shift the
+             start time by the time already spent animating */
+          startTime = performance.now() - (lastElapsed || 0);
+          frameId = requestAnimationFrame(animate);
+        }
+        var lastElapsed = 0;
+        function pause() {
+          if (!running) return;
+          running = false;
+          lastElapsed = performance.now() - startTime;
+          cancelAnimationFrame(frameId);
+        }
+        function gate() {
+          if (onScreen && !document.hidden) play(); else pause();
+        }
+        if ("IntersectionObserver" in window) {
+          new IntersectionObserver(function (entries) {
+            onScreen = entries[0].isIntersecting;
+            gate();
+          }).observe(container);
+        }
+        document.addEventListener("visibilitychange", gate);
+        play();
+
+        /* ── Preset examples, wired to the live gradient ────────
+           A tap on a tile swaps the hero gradient's params; the
+           running loop picks the new values up on its next frame.
+           Each tile's flat swatch is then replaced with a still of
+           its preset, rendered once through this same shader on a
+           throwaway canvas — the context is released right after
+           the capture, so the page keeps only the hero's. */
+        presetHandler = function (p) {
+          params = Object.assign({}, p);
+          setColors();
+          if (still) draw(4);
+        };
+
+        function renderStill(p) {
+          var c = document.createElement("canvas");
+          c.width = 440;
+          c.height = 275;
+          var g = c.getContext("webgl2", { preserveDrawingBuffer: true, antialias: true });
+          if (!g) return null;
+          function sh(type, src) {
+            var s = g.createShader(type);
+            g.shaderSource(s, src);
+            g.compileShader(s);
+            return s;
+          }
+          var prog = g.createProgram();
+          g.attachShader(prog, sh(g.VERTEX_SHADER, "#version 300 es\nin vec4 a_position;\nvoid main() { gl_Position = a_position; }"));
+          g.attachShader(prog, sh(g.FRAGMENT_SHADER, FRAGMENT_SHADER));
+          g.linkProgram(prog);
+          if (!g.getProgramParameter(prog, g.LINK_STATUS)) return null;
+          g.useProgram(prog);
+          var buf = g.createBuffer();
+          g.bindBuffer(g.ARRAY_BUFFER, buf);
+          g.bufferData(g.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, -1, 1, 1, -1, 1, 1]), g.STATIC_DRAW);
+          var loc = g.getAttribLocation(prog, "a_position");
+          g.enableVertexAttribArray(loc);
+          g.vertexAttribPointer(loc, 2, g.FLOAT, false, 0, 0);
+          function U(name) { return g.getUniformLocation(prog, name); }
+          var s1 = hexToRgba(p.color1), s2 = hexToRgba(p.color2), s3 = hexToRgba(p.color3);
+          g.uniform1f(U("u_time"), 2.2 * ((p.speed / 100) * 5) + p.offset * 0.01);
+          g.uniform2f(U("u_resolution"), c.width, c.height);
+          g.uniform1f(U("u_pixelRatio"), 1);
+          g.uniform1f(U("u_scale"), p.scale);
+          g.uniform1f(U("u_rotation"), (p.rotation * Math.PI) / 180);
+          g.uniform4f(U("u_color1"), s1[0], s1[1], s1[2], s1[3]);
+          g.uniform4f(U("u_color2"), s2[0], s2[1], s2[2], s2[3]);
+          g.uniform4f(U("u_color3"), s3[0], s3[1], s3[2], s3[3]);
+          g.uniform1f(U("u_proportion"), p.proportion / 100);
+          g.uniform1f(U("u_softness"), p.softness / 100);
+          g.uniform1f(U("u_shape"), p.shape);
+          g.uniform1f(U("u_shapeScale"), p.shapeSize / 100);
+          g.uniform1f(U("u_distortion"), p.distortion / 50);
+          g.uniform1f(U("u_swirl"), p.swirl / 100);
+          g.uniform1f(U("u_swirlIterations"), p.swirl === 0 ? 0 : p.swirlIterations);
+          g.drawArrays(g.TRIANGLES, 0, 6);
+          var url = null;
+          try { url = c.toDataURL("image/png"); } catch (e) { url = null; }
+          var lose = g.getExtension("WEBGL_lose_context");
+          if (lose) lose.loseContext();
+          return url;
+        }
+
+        presetTiles.forEach(function (t) {
+          var url = renderStill(t.preset.params);
+          if (url) t.thumb.style.backgroundImage = "url(" + url + ")";
+        });
+      })();
+    </script>
+  </body>
+</html>
